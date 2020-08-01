@@ -1,0 +1,24 @@
+{
+  "name": "mediasync.js",
+  "version": "1.0.0",
+  "description": "Sync timing object and video element.",
+  "main": "mediaSync.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/homfen/MediaSync.js.git"
+  },
+  "keywords": [
+    "mediasync",
+    "video",
+    "js"
+  ],
+  "author": "homfen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/homfen/MediaSync.js/issues"
+  },
+  "homepage": "https://github.com/homfen/MediaSync.js#readme"
+}

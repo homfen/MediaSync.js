@@ -1,0 +1,40 @@
+const maxGap = 0.16;
+
+function checkPos(video, timing) {
+  const { velocity, position } = timing.query();
+  if (velocity > 0) {
+    const gap = video.currentTime - position;
+    const absGap = Math.abs(gap);
+    let delay = false;
+    if (absGap > maxGap) {
+      video.currentTime -= gap;
+      delay = true;
+    }
+    setTimeout(
+      () => {
+        checkPos(video, timing);
+      },
+      delay ? Math.trunc(absGap * 100) : 10
+    );
+  } else {
+    video.currentTime = position;
+  }
+}
+
+export default function sync(video, timing) {
+  timing.on('change', () => {
+    const vector = timing.query();
+    const { velocity } = vector;
+    video.playbackRate = velocity;
+    checkPos(video, timing);
+    if (velocity > 0) {
+      if (video.paused) {
+        video.play();
+      }
+    } else {
+      if (!video.paused) {
+        video.pause();
+      }
+    }
+  });
+}

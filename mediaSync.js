@@ -1,7 +1,8 @@
 const maxGap = 0.16;
+let timer = null;
 
 function checkPos(video, timing) {
-  const { velocity, position } = timing.query();
+  const {velocity, position} = timing.query();
   if (velocity > 0) {
     const gap = video.currentTime - position;
     const absGap = Math.abs(gap);
@@ -10,11 +11,11 @@ function checkPos(video, timing) {
       video.currentTime -= gap;
       delay = true;
     }
-    setTimeout(
+    timer = setTimeout(
       () => {
         checkPos(video, timing);
       },
-      delay ? Math.trunc(absGap * 100) : 10
+      delay ? Math.trunc(absGap * 100) : 10,
     );
   } else {
     video.currentTime = position;
@@ -24,8 +25,9 @@ function checkPos(video, timing) {
 export default function sync(video, timing) {
   timing.on('change', () => {
     const vector = timing.query();
-    const { velocity } = vector;
+    const {velocity} = vector;
     video.playbackRate = velocity;
+    clearTimeout(timer);
     checkPos(video, timing);
     if (velocity > 0) {
       if (video.paused) {

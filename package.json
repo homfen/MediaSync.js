@@ -1,6 +1,6 @@
 {
   "name": "mediasync.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sync timing object and video element.",
   "main": "mediaSync.js",
   "scripts": {
@@ -10,11 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/homfen/MediaSync.js.git"
   },
-  "keywords": [
-    "mediasync",
-    "video",
-    "js"
-  ],
+  "keywords": ["mediasync", "video", "js"],
   "author": "homfen",
   "license": "ISC",
   "bugs": {

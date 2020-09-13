@@ -1,5 +1,6 @@
 const maxGap = 0.16;
 let timer = null;
+let oldTiming = null;
 
 function checkPos(video, timing) {
   const {velocity, position} = timing.query();
@@ -23,6 +24,10 @@ function checkPos(video, timing) {
 }
 
 export default function sync(video, timing) {
+  if (oldTiming) {
+    oldTiming.off('change');
+  }
+  oldTiming = timing;
   timing.on('change', () => {
     const vector = timing.query();
     const {velocity} = vector;

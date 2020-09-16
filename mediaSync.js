@@ -26,6 +26,7 @@ function checkPos(video, timing) {
 export default function sync(video, timing) {
   if (oldTiming) {
     oldTiming.off('change');
+    clearTimeout(timer);
   }
   oldTiming = timing;
   timing.on('change', () => {

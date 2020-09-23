@@ -2,15 +2,16 @@ const maxGap = 0.16;
 let timer = null;
 let timing = null;
 let video = null;
-let isVideojs = false;
 let sub = null;
 
 function playbackRate(rate) {
-  isVideojs ? video.playbackRate(rate) : (video.playbackRate = rate);
+  typeof video.playbackRate === 'function'
+    ? video.playbackRate(rate)
+    : (video.playbackRate = rate);
 }
 
 function currentTime(time) {
-  if (isVideojs) {
+  if (typeof video.currentTime === 'function') {
     if (time != null) {
       video.currentTime(time);
     } else {
@@ -70,12 +71,11 @@ export function unSync(timing) {
   clearTimeout(timer);
 }
 
-export default function sync(theVideo, theTiming, videojs = false) {
+export default function sync(theVideo, theTiming) {
   if (timing) {
     unSync(timing);
   }
   timing = theTiming;
   video = theVideo;
-  isVideojs = videojs;
   sub = timing.on('change', onChange);
 }

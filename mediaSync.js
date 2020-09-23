@@ -1,11 +1,34 @@
 const maxGap = 0.16;
 let timer = null;
-let oldTiming = null;
+let timing = null;
+let video = null;
+let isVideojs = false;
+let sub = null;
 
-function checkPos(video, timing) {
+function playbackRate(rate) {
+  isVideojs ? video.playbackRate(rate) : (video.playbackRate = rate);
+}
+
+function currentTime(time) {
+  if (isVideojs) {
+    if (time != null) {
+      video.currentTime(time);
+    } else {
+      return video.currentTime();
+    }
+  } else {
+    if (time != null) {
+      video.currentTime = time;
+    } else {
+      return video.currentTime;
+    }
+  }
+}
+
+function checkPos() {
   const {velocity, position} = timing.query();
   if (velocity > 0) {
-    const gap = video.currentTime - position;
+    const gap = currentTime() - position;
     const absGap = Math.abs(gap);
     let delay = false;
     if (absGap > maxGap) {
@@ -14,35 +37,45 @@ function checkPos(video, timing) {
     }
     timer = setTimeout(
       () => {
-        checkPos(video, timing);
+        checkPos();
       },
       delay ? Math.trunc(absGap * 100) : 10,
     );
   } else {
-    video.currentTime = position;
+    currentTime(position);
   }
 }
 
-export default function sync(video, timing) {
-  if (oldTiming) {
-    oldTiming.off('change');
-    clearTimeout(timer);
-  }
-  oldTiming = timing;
-  timing.on('change', () => {
-    const vector = timing.query();
-    const {velocity} = vector;
-    video.playbackRate = velocity;
-    clearTimeout(timer);
-    checkPos(video, timing);
-    if (velocity > 0) {
-      if (video.paused) {
-        video.play();
-      }
-    } else {
-      if (!video.paused) {
-        video.pause();
-      }
+function onChange() {
+  const vector = timing.query();
+  const {velocity} = vector;
+  playbackRate(velocity);
+  clearTimeout(timer);
+  checkPos();
+  if (velocity > 0) {
+    if (video.paused) {
+      video.play();
     }
-  });
+  } else {
+    if (!video.paused) {
+      video.pause();
+    }
+  }
+}
+
+export function unSync(timing) {
+  if (sub) {
+    timing.off(sub);
+  }
+  clearTimeout(timer);
+}
+
+export default function sync(theVideo, theTiming, videojs = false) {
+  if (timing) {
+    unSync(timing);
+  }
+  timing = theTiming;
+  video = theVideo;
+  isVideojs = videojs;
+  sub = timing.on('change', onChange);
 }
